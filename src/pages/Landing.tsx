@@ -4,10 +4,16 @@ import { subjects } from '../data/catalog'
 import { subjectProgress } from '../lib/progress'
 import { csLectures } from '../data/cs201/lectures'
 import { lectures as mathLectures } from '../data/mth301/lectures'
+import { formatMinutes, subjectStudyMinutes } from '../data/studyPlans'
 
 const counts = {
   cs201: csLectures.length,
   mth301: mathLectures.length,
+}
+
+const hours = {
+  cs201: subjectStudyMinutes('cs201', csLectures.map((lecture) => lecture.id)),
+  mth301: subjectStudyMinutes('mth301', mathLectures.map((lecture) => lecture.id)),
 }
 
 export function Landing() {
@@ -38,6 +44,7 @@ export function Landing() {
               </ul>
               <p className="muted">
                 {progress.completedLectures.length}/{total} midterm lectures opened
+                · {formatMinutes(hours[subject.id])} if she sits with all of them
               </p>
               <div className="term-actions">
                 <Link className="btn" to={`/${subject.id}/mids`}>Open Mids</Link>

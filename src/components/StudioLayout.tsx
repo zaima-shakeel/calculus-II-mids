@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { getGuide } from '../data/cs201/guides'
+import { getStudyPlan } from '../data/studyPlans'
 import { subjectProgress } from '../lib/progress'
+import { FocusTimer } from './FocusTimer'
 import { LoveBanner, LoveChip } from './LoveNote'
 
 export interface NavItem {
   id: string
   number: string
   title: string
+  minutes?: number
 }
 
 export function StudioLayout({
@@ -46,8 +49,10 @@ export function StudioLayout({
     }
   }, [subjectId])
 
-  const lectureId = location.pathname.match(/\/lecture\/(cs-l\d+)/)?.[1]
-  const topicLove = lectureId ? getGuide(lectureId)?.love : undefined
+  const lectureId = location.pathname.match(/\/lecture\/([^/?]+)/)?.[1]
+  const current = items.find((item) => item.id === lectureId)
+  const plan = lectureId ? getStudyPlan(subjectId, lectureId) : undefined
+  const topicLove = subjectId === 'cs201' && lectureId ? getGuide(lectureId)?.love : undefined
 
   const done = progress.completedLectures.length
   const percent = useMemo(
@@ -62,10 +67,17 @@ export function StudioLayout({
         <div className="topbar">
           <button className="menu-btn" onClick={() => setOpen(true)}>Lectures</button>
           <NavLink className="btn ghost small" to="/">All subjects</NavLink>
-          <LoveChip />
-          <div className="progress-chip">
-            <div className="progress-bar"><span style={{ width: `${percent}%` }} /></div>
-            {done}/{items.length} lectures visited
+          <div className="topbar-right">
+            <LoveChip />
+            <FocusTimer
+              suggestedMin={plan?.minutes}
+              lectureLabel={current ? `Lecture ${current.number}` : `${code} studio`}
+              lectureCue={plan?.cue}
+            />
+            <div className="progress-chip">
+              <div className="progress-bar"><span style={{ width: `${percent}%` }} /></div>
+              {done}/{items.length} lectures visited
+            </div>
           </div>
         </div>
         <Outlet />
@@ -101,7 +113,10 @@ export function StudioLayout({
                 className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
               >
                 <span className="nav-num">{item.number}</span>
-                <span className="nav-title">{item.title}</span>
+                <span className="nav-title">
+                  {item.title}
+                  {item.minutes ? <em className="nav-time">{item.minutes} min</em> : null}
+                </span>
                 <span className={`nav-dot ${read ? 'done' : ''}`} />
               </NavLink>
             )

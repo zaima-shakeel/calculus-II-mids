@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { LoveCard } from '../../components/LoveNote'
 import { csCodingCount, csLectures, csMcqCount, csOutputCount } from '../../data/cs201/lectures'
+import { formatMinutes, getStudyPlan, subjectStudyMinutes } from '../../data/studyPlans'
 import { subjectProgress } from '../../lib/progress'
 
 export function CsHome() {
@@ -8,6 +9,12 @@ export function CsHome() {
   const resume = progress.lastLectureId
     ? csLectures.find((lecture) => lecture.id === progress.lastLectureId)
     : csLectures[0]
+  const allIds = csLectures.map((lecture) => lecture.id)
+  const totalSit = subjectStudyMinutes('cs201', allIds)
+  const leftSit = subjectStudyMinutes(
+    'cs201',
+    allIds.filter((id) => !progress.completedLectures.includes(id)),
+  )
 
   return (
     <>
@@ -36,16 +43,22 @@ export function CsHome() {
             <div className="stat"><b>{csCodingCount}</b><span>code tasks</span></div>
           </div>
           <p className="muted" style={{ marginTop: 16 }}>
-            The lab compiles real C++ in the browser (g++ 13, C++17). File programs still need Dev-C++ on a PC.
+            Full sit of every lecture: {formatMinutes(totalSit)}.
+            {leftSit && leftSit !== totalSit
+              ? ` About ${formatMinutes(leftSit)} still unopened.`
+              : ' The lab compiles real C++ in the browser.'}
           </p>
         </aside>
       </section>
       <LoveCard seed="cs201-home" />
-      <div className="section-head"><h3>Lectures</h3></div>
+      <div className="section-head">
+        <h3>Lectures</h3>
+        <span className="muted">{formatMinutes(totalSit)} if she sits with all of them</span>
+      </div>
       <div className="lecture-grid">
         {csLectures.map((lecture) => (
           <Link key={lecture.id} className="lecture-card" to={`/cs201/mids/lecture/${lecture.id}`}>
-            <div className="num">Lecture {lecture.number}</div>
+            <div className="num">Lecture {lecture.number} · {getStudyPlan('cs201', lecture.id).minutes} min</div>
             <h3>{lecture.title}</h3>
             <p>{lecture.mcqs.length} MCQs · {lecture.outputGuess.length} output · {lecture.coding.length} to code</p>
           </Link>

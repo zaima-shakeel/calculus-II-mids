@@ -4,7 +4,9 @@ import { LoveCard } from '../../components/LoveNote'
 import { PracticeProblem } from '../../components/PracticeProblem'
 import { Quiz } from '../../components/Quiz'
 import { MathText } from '../../components/MathText'
+import { StudyPlanCard, TimeChip } from '../../components/StudyPlan'
 import { getLecture, getLectureIndex, lectures } from '../../data/mth301/lectures'
+import { getStudyPlan } from '../../data/studyPlans'
 import { markLectureRead } from '../../lib/progress'
 
 export function LecturePage() {
@@ -20,6 +22,7 @@ export function LecturePage() {
 
   const prev = index > 0 ? lectures[index - 1] : null
   const next = index < lectures.length - 1 ? lectures[index + 1] : null
+  const plan = getStudyPlan('mth301', lecture.id)
 
   return (
     <article>
@@ -29,6 +32,7 @@ export function LecturePage() {
         </div>
         <h2>{lecture.title}</h2>
         <div className="meta">
+          <TimeChip minutes={plan.minutes} />
           <span className="chip">{lecture.mcqs.length} MCQs</span>
           <span className="chip">{lecture.practice.length} practice</span>
           <span className="chip">{lecture.formulas.length} formulas</span>
@@ -40,6 +44,8 @@ export function LecturePage() {
           ))}
         </ul>
       </div>
+
+      <StudyPlanCard plan={plan} label={`Lecture ${lecture.number}`} />
 
       <div className="section-head"><h3>Must-know concepts</h3></div>
       <div className="stack">

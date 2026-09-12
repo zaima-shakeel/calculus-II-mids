@@ -4,8 +4,10 @@ import { CppEditor } from '../../components/CppEditor'
 import { Diagram, Story, TermGrid, TopicTags, Walkthrough } from '../../components/cs201/CsLesson'
 import { LoveCard } from '../../components/LoveNote'
 import { Quiz } from '../../components/Quiz'
+import { StudyPlanCard, TimeChip } from '../../components/StudyPlan'
 import { getGuide } from '../../data/cs201/guides'
 import { csLectures, getCsLecture, getCsLectureIndex } from '../../data/cs201/lectures'
+import { getStudyPlan } from '../../data/studyPlans'
 import type { OutputGuess } from '../../data/cs201/types'
 import { markLectureRead } from '../../lib/progress'
 
@@ -45,6 +47,7 @@ export function CsLecturePage() {
 
   const prev = index > 0 ? csLectures[index - 1] : null
   const next = index < csLectures.length - 1 ? csLectures[index + 1] : null
+  const plan = getStudyPlan('cs201', lecture.id)
 
   return (
     <article>
@@ -54,6 +57,7 @@ export function CsLecturePage() {
         </div>
         <h2>{lecture.title}</h2>
         <div className="meta">
+          <TimeChip minutes={plan.minutes} />
           <span className="chip">{lecture.mcqs.length} MCQs</span>
           <span className="chip">{lecture.outputGuess.length} output</span>
           <span className="chip">{lecture.coding.length} coding</span>
@@ -64,6 +68,8 @@ export function CsLecturePage() {
           {lecture.takeaways.map((item) => <li key={item}>{item}</li>)}
         </ul>
       </div>
+
+      <StudyPlanCard plan={plan} label={`Lecture ${lecture.number}`} />
 
       {guide && <LoveCard note={guide.love} />}
 

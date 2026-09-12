@@ -1,5 +1,6 @@
 import { StudioLayout } from '../../components/StudioLayout'
 import { lectures } from '../../data/mth301/lectures'
+import { getStudyPlan } from '../../data/studyPlans'
 
 export function MathLayout() {
   return (
@@ -13,6 +14,7 @@ export function MathLayout() {
         id: lecture.id,
         number: lecture.number,
         title: lecture.shortTitle,
+        minutes: getStudyPlan('mth301', lecture.id).minutes,
       }))}
       extra={[
         { to: '/mth301/mids/quizzes', num: 'Q', title: 'All quizzes' },

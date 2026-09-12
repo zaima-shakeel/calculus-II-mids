@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { LoveCard } from '../../components/LoveNote'
 import { lectures, totalMcqs, totalPractice } from '../../data/mth301/lectures'
+import { formatMinutes, getStudyPlan, subjectStudyMinutes } from '../../data/studyPlans'
 import { subjectProgress } from '../../lib/progress'
 
 export function Home() {
@@ -8,6 +9,12 @@ export function Home() {
   const resume = progress.lastLectureId
     ? lectures.find((lecture) => lecture.id === progress.lastLectureId)
     : lectures[0]
+  const allIds = lectures.map((lecture) => lecture.id)
+  const totalSit = subjectStudyMinutes('mth301', allIds)
+  const leftSit = subjectStudyMinutes(
+    'mth301',
+    allIds.filter((id) => !progress.completedLectures.includes(id)),
+  )
 
   return (
     <>
@@ -35,7 +42,10 @@ export function Home() {
             <div className="stat"><b>{totalPractice}</b><span>practice problems</span></div>
           </div>
           <p className="muted" style={{ marginTop: 16 }}>
-            Progress is saved in this browser only. Green dots in the sidebar mark lectures you have opened.
+            Full sit of every lecture: {formatMinutes(totalSit)}.
+            {leftSit && leftSit !== totalSit
+              ? ` About ${formatMinutes(leftSit)} still unopened.`
+              : ' Green dots in the sidebar mark lectures you have opened.'}
           </p>
         </aside>
       </section>
@@ -43,12 +53,15 @@ export function Home() {
 
       <div className="section-head">
         <h3>Lectures</h3>
-        <Link className="btn ghost small" to="/mth301/mids/cram">5 / 15 / 30 minute cram</Link>
+        <div className="topbar-right">
+          <span className="muted">{formatMinutes(totalSit)} full sit</span>
+          <Link className="btn ghost small" to="/mth301/mids/cram">5 / 15 / 30 minute cram</Link>
+        </div>
       </div>
       <div className="lecture-grid">
         {lectures.map((lecture) => (
           <Link key={lecture.id} className="lecture-card" to={`/mth301/mids/lecture/${lecture.id}`}>
-            <div className="num">Lecture {lecture.number}</div>
+            <div className="num">Lecture {lecture.number} · {getStudyPlan('mth301', lecture.id).minutes} min</div>
             <h3>{lecture.title}</h3>
             <p>{lecture.mcqs.length} quiz questions · {lecture.practice.length} to solve</p>
           </Link>

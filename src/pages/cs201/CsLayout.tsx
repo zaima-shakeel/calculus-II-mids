@@ -1,5 +1,6 @@
 import { StudioLayout } from '../../components/StudioLayout'
 import { csLectures } from '../../data/cs201/lectures'
+import { getStudyPlan } from '../../data/studyPlans'
 
 export function CsLayout() {
   return (
@@ -13,6 +14,7 @@ export function CsLayout() {
         id: lecture.id,
         number: lecture.number,
         title: lecture.shortTitle,
+        minutes: getStudyPlan('cs201', lecture.id).minutes,
       }))}
       extra={[
         { to: '/cs201/mids/lab', num: 'C++', title: 'C++ lab' },
