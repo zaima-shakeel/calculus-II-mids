@@ -1,11 +1,13 @@
 # VU Study Studio
 
-A two-subject midterm site for Zainab:
+For Zaima — two midterm rooms, one quiet corner of the internet.
+
+Built so the late-night revision feels a little less lonely. CS201 and MTH301, side by side, waiting whenever you sit down with tea and a deadline.
 
 - **CS201** Introduction to Programming — lectures 1–18 from the [VU playlist](https://www.youtube.com/playlist?list=PLKyB9RYzaFRiuBRJQyTTnl4d4UGYS2rR4) and the official handout, plus a browser C++ lab
 - **MTH301** Calculus 2 — rendered notes, quizzes, and worked problems
 
-Finals rooms are stubbed for later.
+Finals rooms are stubbed for later. Midterms first. The rest can wait.
 
 ## Run locally
 
@@ -13,6 +15,8 @@ Finals rooms are stubbed for later.
 npm install
 npm run dev
 ```
+
+Then open it. The lights stay on.
 
 ## Deploy on Vercel
 
