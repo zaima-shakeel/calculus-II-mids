@@ -1,14 +1,22 @@
 import { useMemo, useState } from 'react'
-import type { MCQ } from '../data/types'
+import type { MCQ } from '../data/shared'
+import { quizLove } from '../data/loveNotes'
 import { saveQuizScore } from '../lib/progress'
 import { MathText } from './MathText'
 
-export function Quiz({ lectureId, questions }: { lectureId: string; questions: MCQ[] }) {
+export function Quiz({
+  subjectId,
+  lectureId,
+  questions,
+}: {
+  subjectId: string
+  lectureId: string
+  questions: MCQ[]
+}) {
   const [index, setIndex] = useState(0)
   const [picked, setPicked] = useState<number | null>(null)
   const [correct, setCorrect] = useState(0)
   const [done, setDone] = useState(false)
-
   const q = questions[index]
   const letters = useMemo(() => ['A', 'B', 'C', 'D', 'E'], [])
 
@@ -22,8 +30,7 @@ export function Quiz({ lectureId, questions }: { lectureId: string; questions: M
 
   function next() {
     if (index + 1 >= questions.length) {
-      const totalCorrect = correct
-      saveQuizScore(lectureId, totalCorrect, questions.length)
+      saveQuizScore(subjectId, lectureId, correct, questions.length)
       setDone(true)
       return
     }
@@ -47,10 +54,10 @@ export function Quiz({ lectureId, questions }: { lectureId: string; questions: M
         </p>
         <p>
           {correct === questions.length
-            ? 'Perfect. This lecture is sitting well.'
+            ? `${quizLove.perfect.emoji} ${quizLove.perfect.text}`
             : correct >= Math.ceil(questions.length * 0.7)
-              ? 'Solid. Revisit the misses once, then move on.'
-              : 'Worth another pass. Open the formulas above and try again.'}
+              ? `${quizLove.strong.emoji} ${quizLove.strong.text}`
+              : `${quizLove.again.emoji} ${quizLove.again.text}`}
         </p>
         <button className="btn" onClick={restart}>Try again</button>
       </section>
@@ -67,20 +74,9 @@ export function Quiz({ lectureId, questions }: { lectureId: string; questions: M
       <div className="options">
         {q.options.map((option, i) => {
           const shown = picked !== null
-          const cls = shown
-            ? i === q.correct
-              ? 'correct'
-              : i === picked
-                ? 'wrong'
-                : ''
-            : ''
+          const cls = shown ? (i === q.correct ? 'correct' : i === picked ? 'wrong' : '') : ''
           return (
-            <button
-              key={option}
-              className={`option ${cls}`}
-              disabled={picked !== null}
-              onClick={() => choose(i)}
-            >
+            <button key={option} className={`option ${cls}`} disabled={picked !== null} onClick={() => choose(i)}>
               <strong>{letters[i]}.</strong> <MathText text={option} />
             </button>
           )

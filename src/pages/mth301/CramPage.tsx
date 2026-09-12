@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
-import { MathText } from '../components/MathText'
-import { lectures } from '../data/lectures'
+import { LoveCard } from '../../components/LoveNote'
+import { MathText } from '../../components/MathText'
+import { lectures } from '../../data/mth301/lectures'
 
 export function CramPage() {
   return (
@@ -9,8 +10,9 @@ export function CramPage() {
         <h2>Cram cards</h2>
         <p className="overview">
           If time is short, use these 5 / 15 / 30 minute plans. They come straight from the
-          “midterm priority” section of each lecture.
+          “midterm priority” section of each lecture. Five minutes with these cards still counts, my love 🌙
         </p>
+        <LoveCard seed="mth301-cram" />
       </div>
       <div className="stack">
         {lectures.map((lecture) => (
@@ -39,7 +41,7 @@ export function CramPage() {
               </article>
             </div>
             <div style={{ marginTop: 12 }}>
-              <Link className="btn ghost small" to={`/lecture/${lecture.id}`}>Open lecture</Link>
+              <Link className="btn ghost small" to={`/mth301/mids/lecture/${lecture.id}`}>Open lecture</Link>
             </div>
           </section>
         ))}

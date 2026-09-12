@@ -1,13 +1,14 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Quiz } from '../components/Quiz'
-import { lectures, totalMcqs } from '../data/lectures'
-import type { MCQ } from '../data/types'
-import { loadProgress } from '../lib/progress'
+import { LoveCard } from '../../components/LoveNote'
+import { Quiz } from '../../components/Quiz'
+import { lectures, totalMcqs } from '../../data/mth301/lectures'
+import type { MCQ } from '../../data/shared'
+import { subjectProgress } from '../../lib/progress'
 
 export function QuizHub() {
   const [mode, setMode] = useState<'menu' | 'mixed'>('menu')
-  const progress = loadProgress()
+  const progress = subjectProgress('mth301')
 
   const mixed = useMemo(() => {
     const bag: MCQ[] = lectures.flatMap((lecture) => lecture.mcqs)
@@ -22,7 +23,7 @@ export function QuizHub() {
           <p className="overview">Twelve questions drawn from every lecture. Treat it like a short grand quiz.</p>
           <button className="btn ghost small" onClick={() => setMode('menu')}>Back to quiz list</button>
         </div>
-        <Quiz lectureId="mixed" questions={mixed} />
+        <Quiz subjectId="mth301" lectureId="mixed" questions={mixed} />
       </article>
     )
   }
@@ -36,12 +37,13 @@ export function QuizHub() {
           or sit a mixed set of twelve.
         </p>
         <button className="btn" onClick={() => setMode('mixed')}>Start mixed quiz</button>
+        <div style={{ marginTop: 16 }}><LoveCard seed="mth301-quiz-hub" /></div>
       </div>
       <div className="lecture-grid" style={{ marginTop: 22 }}>
         {lectures.map((lecture) => {
           const score = progress.quizScores[lecture.id]
           return (
-            <Link key={lecture.id} className="lecture-card" to={`/lecture/${lecture.id}`}>
+            <Link key={lecture.id} className="lecture-card" to={`/mth301/mids/lecture/${lecture.id}`}>
               <div className="num">Lecture {lecture.number}</div>
               <h3>{lecture.shortTitle}</h3>
               <p>

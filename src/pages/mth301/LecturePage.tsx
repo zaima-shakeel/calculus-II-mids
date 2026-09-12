@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { PracticeProblem } from '../components/PracticeProblem'
-import { Quiz } from '../components/Quiz'
-import { MathText } from '../components/MathText'
-import { getLecture, getLectureIndex, lectures } from '../data/lectures'
-import { markLectureRead } from '../lib/progress'
+import { LoveCard } from '../../components/LoveNote'
+import { PracticeProblem } from '../../components/PracticeProblem'
+import { Quiz } from '../../components/Quiz'
+import { MathText } from '../../components/MathText'
+import { getLecture, getLectureIndex, lectures } from '../../data/mth301/lectures'
+import { markLectureRead } from '../../lib/progress'
 
 export function LecturePage() {
   const { id = '' } = useParams()
@@ -12,10 +13,10 @@ export function LecturePage() {
   const index = getLectureIndex(id)
 
   useEffect(() => {
-    if (lecture) markLectureRead(lecture.id)
+    if (lecture) markLectureRead('mth301', lecture.id)
   }, [lecture])
 
-  if (!lecture) return <Navigate to="/" replace />
+  if (!lecture) return <Navigate to="/mth301/mids" replace />
 
   const prev = index > 0 ? lectures[index - 1] : null
   const next = index < lectures.length - 1 ? lectures[index + 1] : null
@@ -122,7 +123,7 @@ export function LecturePage() {
       </ul>
 
       <div className="section-head"><h3>Quiz</h3></div>
-      <Quiz lectureId={lecture.id} questions={lecture.mcqs} />
+      <Quiz subjectId="mth301" lectureId={lecture.id} questions={lecture.mcqs} />
 
       <div className="section-head"><h3>Questions for you to solve</h3></div>
       <div className="stack">
@@ -155,12 +156,14 @@ export function LecturePage() {
         </div>
       </section>
 
+      <LoveCard seed={lecture.id} />
+
       <div className="pager">
         {prev ? (
-          <Link className="btn ghost" to={`/lecture/${prev.id}`}>← Lecture {prev.number}</Link>
+          <Link className="btn ghost" to={`/mth301/mids/lecture/${prev.id}`}>← Lecture {prev.number}</Link>
         ) : <span />}
         {next ? (
-          <Link className="btn" to={`/lecture/${next.id}`}>Lecture {next.number} →</Link>
+          <Link className="btn" to={`/mth301/mids/lecture/${next.id}`}>Lecture {next.number} →</Link>
         ) : <span />}
       </div>
     </article>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Practice } from '../data/types'
+import type { Practice } from '../data/mth301/types'
 import { MathText } from './MathText'
 
 export function PracticeProblem({ problem, index }: { problem: Practice; index: number }) {
