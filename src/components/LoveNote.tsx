@@ -30,12 +30,20 @@ export function LoveBanner({ note, compact }: { note?: LoveNoteData; compact?: b
   )
 }
 
-export function LoveCard({ seed, className = '' }: { seed: string; className?: string }) {
-  const note = noteForSeed(seed)
+export function LoveCard({
+  seed,
+  note,
+  className = '',
+}: {
+  seed?: string
+  note?: LoveNoteData
+  className?: string
+}) {
+  const shown = note ?? noteForSeed(seed ?? 'love')
   return (
     <aside className={`love-card ${className}`}>
-      <span className="love-emoji">{note.emoji}</span>
-      <p>{note.text}</p>
+      <span className="love-emoji">{shown.emoji}</span>
+      <p>{shown.text}</p>
       <cite>with all my chest, Marsad</cite>
     </aside>
   )

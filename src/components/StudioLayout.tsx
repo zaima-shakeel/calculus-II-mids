@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
-import { LoveBanner, LoveChip } from './LoveNote'
+import { getGuide } from '../data/cs201/guides'
 import { subjectProgress } from '../lib/progress'
+import { LoveBanner, LoveChip } from './LoveNote'
 
 export interface NavItem {
   id: string
@@ -45,6 +46,9 @@ export function StudioLayout({
     }
   }, [subjectId])
 
+  const lectureId = location.pathname.match(/\/lecture\/(cs-l\d+)/)?.[1]
+  const topicLove = lectureId ? getGuide(lectureId)?.love : undefined
+
   const done = progress.completedLectures.length
   const percent = useMemo(
     () => (items.length ? Math.round((done / items.length) * 100) : 0),
@@ -71,7 +75,7 @@ export function StudioLayout({
           <div className="brand-kicker">{code} · Midterm</div>
           <h1>{title}</h1>
           <p>{blurb}</p>
-          <LoveBanner compact />
+          <LoveBanner compact note={topicLove} />
         </div>
         <div className="nav-group">
           <div className="nav-label">Studio</div>

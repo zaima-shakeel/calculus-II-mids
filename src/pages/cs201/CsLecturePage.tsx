@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { CppEditor } from '../../components/CppEditor'
+import { Diagram, Story, TermGrid, TopicTags, Walkthrough } from '../../components/cs201/CsLesson'
 import { LoveCard } from '../../components/LoveNote'
 import { Quiz } from '../../components/Quiz'
+import { getGuide } from '../../data/cs201/guides'
 import { csLectures, getCsLecture, getCsLectureIndex } from '../../data/cs201/lectures'
 import type { OutputGuess } from '../../data/cs201/types'
 import { markLectureRead } from '../../lib/progress'
@@ -33,6 +35,7 @@ export function CsLecturePage() {
   const { id = '' } = useParams()
   const lecture = getCsLecture(id)
   const index = getCsLectureIndex(id)
+  const guide = getGuide(id)
 
   useEffect(() => {
     if (lecture) markLectureRead('cs201', lecture.id)
@@ -56,10 +59,36 @@ export function CsLecturePage() {
           <span className="chip">{lecture.coding.length} coding</span>
         </div>
         <p className="overview">{lecture.overview}</p>
+        {guide && <TopicTags tags={guide.tags} />}
         <ul className="takeaways">
           {lecture.takeaways.map((item) => <li key={item}>{item}</li>)}
         </ul>
       </div>
+
+      {guide && <LoveCard note={guide.love} />}
+
+      {guide && (
+        <>
+          <div className="section-head"><h3>Learn it from zero</h3></div>
+          <Story paragraphs={guide.story} />
+
+          <div className="section-head"><h3>Picture this</h3></div>
+          <div className="stack">
+            {guide.diagrams.map((diagram) => (
+              <Diagram key={diagram.title} diagram={diagram} />
+            ))}
+          </div>
+
+          <div className="section-head"><h3>Important terms</h3></div>
+          <p className="muted" style={{ marginTop: -8 }}>
+            Each term has a tag. Open one to get the everyday picture and the exam reason.
+          </p>
+          <TermGrid terms={guide.terms} />
+
+          <div className="section-head"><h3>Walk it with me</h3></div>
+          <Walkthrough key={lecture.id} steps={guide.walkthrough} />
+        </>
+      )}
 
       <div className="video-wrap">
         <iframe
@@ -70,16 +99,20 @@ export function CsLecturePage() {
         />
       </div>
 
-      <div className="section-head"><h3>Must-know</h3></div>
-      <div className="stack">
-        {lecture.concepts.map((concept) => (
-          <section key={concept.name} className="concept">
-            <h4>{concept.name}</h4>
-            <p><strong>Definition.</strong> {concept.definition}</p>
-            <p className="muted">{concept.explanation}</p>
-          </section>
-        ))}
-      </div>
+      {!guide && (
+        <>
+          <div className="section-head"><h3>Must-know</h3></div>
+          <div className="stack">
+            {lecture.concepts.map((concept) => (
+              <section key={concept.name} className="concept">
+                <h4>{concept.name}</h4>
+                <p><strong>Definition.</strong> {concept.definition}</p>
+                <p className="muted">{concept.explanation}</p>
+              </section>
+            ))}
+          </div>
+        </>
+      )}
 
       <div className="section-head"><h3>Code from the lecture</h3></div>
       <div className="stack">
@@ -123,8 +156,6 @@ export function CsLecturePage() {
           </section>
         ))}
       </div>
-
-      <LoveCard seed={lecture.id} />
 
       <div className="pager">
         {prev ? (
